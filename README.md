@@ -21,7 +21,7 @@ git clone <repo_url>
 
 ```
 cd mesinesp-baseline/src
-python new_detection_method.py -d /path/to/input/text/files/ -i /path/to/input/information/ -o /path/to/output/folder/
+python new_detection_method.py -d /path/to/input/json_file.json -i /path/to/input/TSV_file.tsv -o /path/to/output/folder/
 ```
 This creates output_file.txt in /path/to/output/folder/ with the detected suggestions.
 
@@ -30,7 +30,7 @@ This creates output_file.txt in /path/to/output/folder/ with the detected sugges
 ##### Steps:
 1. Parse annotation information in TSV.
 2. Find text spans in -d that are in TSV. Assign a DeCS code to them.
-3. Write TSV file in -o
+3. Write JSON file in -o
 
 ##### Arguments:
 + **Input**: 
@@ -44,10 +44,10 @@ This creates output_file.txt in /path/to/output/folder/ with the detected sugges
 
 ##### To execute it: 
 ```
-cd detect_annotations/src
-python new_detection_method.py -i ../data/decs_terms_and_synonyms_uniq.tsv -d ../data/text_files -o ../../
+cd mesinesp-baseline/src
+python new_detection_method.py -i ../data/decs_terms_and_synonyms_uniq.tsv -d ../data/decs_terms_and_synonyms_uniq.json -o ../../
 ```
-This creates output_file.txt in ../../.
+This creates output_file.json in ../../.
 
 
 ## Built With
