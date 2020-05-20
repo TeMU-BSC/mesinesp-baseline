@@ -116,7 +116,7 @@ def parse_tsv(input_path):
     df_annot: pandas DataFrame
         It has 4 columns: 'filename', 'label', 'code', 'span'.
     '''
-    df_annot = pd.read_csv(input_path, sep='\t', header=None)
+    df_annot = pd.read_csv(input_path, sep='\t', header=0)
     if len(df_annot.columns) == 8:
         df_annot.columns=['annotator', 'bunch', 'filename', 'mark',
                       'label', 'offset1', 'offset2', 'span', 'code']

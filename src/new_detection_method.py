@@ -11,7 +11,7 @@ import os
 from utils.app_specific_utils import (format_input_info, parse_tsv)
 from utils.general_utils import argparser   
 from detect_annotations import detect_annots
-
+import json
 
 
 if __name__ == '__main__':
@@ -42,15 +42,18 @@ if __name__ == '__main__':
     print('Number of suggested annotations: {}'.format(c))
            
     ######### WRITE OUTPUT ###########
-    print('\n\nWriting output...\n\n')
-    with open(os.path.join(out_path, 'output_file.txt'), 'w') as f:
-        for k,v in final_annotations.items():
-            for val in v:
-                f.write(k)
-                f.write('\t')
-                f.write(str(val[4]))
-                f.write('\t')
-                f.write(str(val[0]))
-                f.write('\n')
+    # Store only codes
+    for k,v in final_annotations.items():
+        final_annotations[k] = list(set(map(lambda x: x[-1], v)))
+        
+    # Write output
+    json_array = []
+    for k, v in final_annotations.items():
+        json_array.append({'id': k, 'labels': v})
+    out = {}
+    out['documents'] = json_array
+    
+    with open(os.path.join(out_path, 'output_file.json'), 'w') as my_file:
+        json.dump(out, my_file)
     
     print('\n\nFINISHED!')

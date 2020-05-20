@@ -8,6 +8,7 @@ Created on Wed Mar 25 09:40:48 2020
 import itertools
 import os
 import time
+import json
 from utils.app_specific_utils import (format_text_info, store_prediction,
                                       check_surroundings)
 from utils.general_utils import Flatten
@@ -51,42 +52,35 @@ def detect_annots(datapath, min_upper, annot2code, file2annot_processed,
     
     final_annots = {}
     c = 0
-    for root, dirs, files in os.walk(datapath):
-        for file_ in files:
-            if file_[-3:] != 'txt':
-                # get only txt files
-                continue
-            c, final_annots = \
-                scan_one_file(file_, root, file2annot_processed, 
-                              annot2annot_processed, annot2label, annot2code, 
-                              file2annot, final_annots, c, min_upper)
-            print(file_)
+    json_object = json.load(open(datapath, 'r'))
+    
+    for article in json_object['articles']:
+        txt = article['abstractText']
+        _id = article['id']
+        print(article['id'])
+        c, final_annots = \
+            scan_one_file(txt,_id,file2annot_processed,annot2annot_processed,
+                          annot2label,annot2code,file2annot,final_annots,c,min_upper)
 
     total_t = time.time() - start
     
     return total_t, final_annots, c
 
 
-def scan_one_file(filename, root, file2annot_processed, annot2annot_processed, 
+def scan_one_file(txt, _id, file2annot_processed, annot2annot_processed, 
                   annot2label, annot2code, file2annot, final_annotations, c, 
                   min_upper=5):
         
     #### 0. Initialize, etc. ####
     new_annots = []
     pos_matrix = []
-    filename_ann = filename[0:-3]+ 'ann'
-     
-    #### 1. Open txt file ####
-    txt = open(os.path.join(root,filename)).read()
 
     #### 2. Format text information ####
     words_final, words_processed2pos = format_text_info(txt, min_upper)
 
     #### 3. Intersection ####
-    # Find words within annotations of OTHER files
-    # TODO: NOT OTHER FILES! I DO NOT NEED THIS: I HAVE A TSV; NOT OTHER FILES
-    annot_processed_other_files = list(dict(filter(lambda elem: elem[0] != filename_ann, 
-                                               file2annot_processed.items())).values())
+    # Find words within annotations
+    annot_processed_other_files = file2annot_processed.values()
 
     # Flatten results and get set of it
     annotations_final = set(Flatten(annot_processed_other_files))
@@ -167,18 +161,23 @@ def scan_one_file(filename, root, file2annot_processed, annot2annot_processed,
     new_annots_no_duplicates = list(k for k,_ in itertools.groupby(new_annots))
     
     ## 5. Check new annotations are not already annotated in their own ann
-    if filename_ann not in file2annot.keys():
+    '''
+    if _id not in file2annot.keys():
         final_new_annots = new_annots_no_duplicates
     else:
-        annots_in_ann = file2annot[filename_ann]
+        annots_in_ann = file2annot[_id]
         final_new_annots = []
         for new_annot in new_annots_no_duplicates:
             new_annot_word = new_annot[0]
             if any([new_annot_word in x for x in annots_in_ann]) == False:
                 final_new_annots.append(new_annot)
+    
                 
     # Final appends
     c = c + len(final_new_annots)
-    final_annotations[filename] = final_new_annots
+    final_annotations[_id] = final_new_annots'''
+    # Final appends
+    c = c + len(new_annots_no_duplicates)
+    final_annotations[_id] = new_annots_no_duplicates
     
     return c, final_annotations
