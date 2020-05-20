@@ -45,7 +45,7 @@ This creates output_file.txt in /path/to/output/folder/ with the detected sugges
 ##### To execute it: 
 ```
 cd mesinesp-baseline/src
-python new_detection_method.py -i ../data/decs_terms_and_synonyms_uniq.tsv -d ../data/decs_terms_and_synonyms_uniq.json -o ../../
+python new_detection_method.py -i ../data/decs_terms_and_synonyms_uniq.tsv -d ../data/Task_MESINESP-Batch1-Week1_raw.json -o ../../
 ```
 This creates output_file.json in ../../.
 
